@@ -20,15 +20,15 @@
     "test": "builder run npm:test"
   },
   "dependencies": {
-    "builder": "~2.4.0",
-    "builder-victory-component": "~0.2.1",
+    "builder": "FormidableLabs/builder#feature-expand-archetype",
+    "builder-victory-component": "FormidableLabs/builder-victory-component#feature-expand-archetype",
     "d3-scale": "^0.2.0",
     "d3-shape": "^0.2.0",
     "lodash": "^3.10.1",
     "radium": "^0.16.2",
-    "victory-animation": "^0.1.0",
-    "victory-label": "^1.0.1",
-    "victory-util": "^5.0.0"
+    "victory-animation": "FormidableLabs/victory-animation#feature-expand-archetype",
+    "victory-label": "FormidableLabs/victory-label#feature-expand-archetype",
+    "victory-util": "FormidableLabs/victory-util#feature-expand-archetype"
   },
   "devDependencies": {
     "builder-victory-component-dev": "~0.2.1",
