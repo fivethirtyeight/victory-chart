@@ -1,4 +1,5 @@
 import React, { PropTypes } from "react";
+import assign from "lodash/object/assign";
 import pick from "lodash/object/pick";
 import Point from "./point";
 import Scale from "../../helpers/scale";
@@ -238,7 +239,7 @@ export default class VictoryScatter extends React.Component {
     );
   }
 
-  renderData(props, style) {
+  getCalculatedProps(props, style) {
     const data = Data.getData(props);
     const range = {
       x: Helpers.getRange(props, "x"),
@@ -252,14 +253,20 @@ export default class VictoryScatter extends React.Component {
       x: Scale.getBaseScale(props, "x").domain(domain.x).range(range.x),
       y: Scale.getBaseScale(props, "y").domain(domain.y).range(range.y)
     };
-    const z = props.bubbleProperty || "z";
-    const calculatedProps = {data, scale, style, z};
-    return data.map((datum, index) => {
+    const bubbleProperty = props.bubbleProperty || "z";
+    return {data, domain, scale, style, bubbleProperty};
+  }
+
+  renderData(props, calculatedProps) {
+    return calculatedProps.data.map((datum, index) => {
       return this.renderPoint(datum, index, calculatedProps);
     });
   }
 
   render() {
+    const style = this.memoized.getStyles(
+      this.props.style, defaultStyles, this.props.height, this.props.width);
+    const calculatedProps = this.getCalculatedProps(this.props, style);
     // If animating, return a `VictoryAnimation` element that will create
     // a new `VictoryScatter` with nearly identical props, except (1) tweened
     // and (2) `animate` set to null so we don't recurse forever.
@@ -267,20 +274,20 @@ export default class VictoryScatter extends React.Component {
       // Do less work by having `VictoryAnimation` tween only values that
       // make sense to tween. In the future, allow customization of animated
       // prop whitelist/blacklist?
-      const animateData = pick(this.props, [
-        "data", "domain", "height", "maxBubbleSize", "padding", "samples", "size",
-        "style", "width", "x", "y"
-      ]);
 
+      const animateData = assign(
+        pick(calculatedProps, ["data", "domain", "style"]),
+        pick(this.props, [
+          "height, maxBubbleSize", "padding", "samples", "size", "symbol", "width", "bubbleProperty"
+        ])
+      );
       return (
         <VictoryAnimation {...this.props.animate} data={animateData}>
           {(props) => <VictoryScatter {...this.props} {...props} animate={null}/>}
         </VictoryAnimation>
       );
     }
-    const style = this.memoized.getStyles(
-      this.props.style, defaultStyles, this.props.height, this.props.width);
-    const group = <g style={style.parent}>{this.renderData(this.props, style)}</g>;
+    const group = <g style={style.parent}>{this.renderData(this.props, calculatedProps)}</g>;
     return this.props.standalone ? <svg style={style.parent}>{group}</svg> : group;
   }
 }

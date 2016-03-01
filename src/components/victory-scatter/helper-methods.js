@@ -11,17 +11,17 @@ module.exports = {
   },
 
   getBubbleSize(datum, props, calculatedProps) {
-    const {data, z} = calculatedProps;
+    const {data, bubbleProperty} = calculatedProps;
     const getMaxRadius = () => {
       const minPadding = Math.min(...values(Helpers.getPadding(props)));
       return Math.max(minPadding, 5);
     };
-    const zData = data.map((point) => point.z);
+    const zData = data.map((point) => point[bubbleProperty]);
     const zMin = Math.min(...zData);
     const zMax = Math.max(...zData);
     const maxRadius = props.maxBubbleSize || getMaxRadius();
     const maxArea = Math.PI * Math.pow(maxRadius, 2);
-    const area = ((datum[z] - zMin) / (zMax - zMin)) * maxArea;
+    const area = ((datum[bubbleProperty] - zMin) / (zMax - zMin)) * maxArea;
     const radius = Math.sqrt(area / Math.PI);
     return Math.max(radius, 1);
   },
@@ -31,7 +31,7 @@ module.exports = {
       return typeof data.size === "function" ? data.size : Math.max(data.size, 1);
     } else if (typeof props.size === "function") {
       return props.size;
-    } else if (data[calculatedProps.z]) {
+    } else if (data[calculatedProps.bubbleProperty]) {
       return this.getBubbleSize(data, props, calculatedProps);
     } else {
       return Math.max(props.size, 1);
