@@ -106,6 +106,67 @@ Or use the VictoryStack wrapper to create a stacked layout. The y domain is auto
   />
 </VictoryStack>
 ```
+
+For VictoryBar, it is also possible to group stacked layouts as shown below. (Stacking grouped layouts is not supported)
+
+```playground_norender
+class App extends React.Component {
+  getData() {
+    return _.map(_.range(4), (index) => {
+      return [
+        {x: "apples", y: _.random(1, 5)},
+        {x: "oranges", y: _.random(1, 5)},
+        {x: "bananas", y: _.random(1, 5)}
+      ];
+    });
+  }
+
+  render() {
+    return (
+      <VictoryGroup
+        offset={15} height={600}
+      >
+        <VictoryStack
+          colorScale={"red"}
+        >
+          {this.getData().map((d, i) => {
+            return (
+              <VictoryBar
+                key={i} data={d}
+              />
+            );
+          })}
+        </VictoryStack>
+        <VictoryStack
+          colorScale={"green"}
+        >
+          {this.getData().map((d, i) => {
+            return (
+              <VictoryBar
+                key={i} data={d}
+              />
+            );
+          })}
+        </VictoryStack>
+        <VictoryStack
+          colorScale={"blue"}
+        >
+          {this.getData().map((d, i) => {
+            return (
+              <VictoryBar
+                key={i} data={d}
+              />
+            );
+          })}
+        </VictoryStack>
+      </VictoryGroup>
+    );
+  }
+}
+ReactDOM.render(<App/>, mountNode);
+
+```
+
 ### Flexible and Configurable
 
 The sensible defaults VictoryBar provides makes it easy to get started, but everything can be overridden, and configured to suit your needs:
